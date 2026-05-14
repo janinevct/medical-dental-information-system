@@ -9,7 +9,7 @@
 
 # Patient Management Module
 
-## Module Scope
+ Module Scope
 
   The Patient Management Module is a core component of the Medical and Dental Information System that is responsible for organizing and maintaining patient information in a digital and systematic manner. This module allows clinic staff or administrators to efficiently manage patient records through CRUD (Create, Read, Update, Delete) operations.
 
@@ -28,7 +28,7 @@ The module solves the technical challenge of handling patient data accurately an
 
 ---
 
-# Features
+Features
 
 - Create patient records
 - View patient information
@@ -38,13 +38,13 @@ The module solves the technical challenge of handling patient data accurately an
 
 ---
 
-# Technologies Used
+Technologies Used
 
 
 
 ---
 
-# Group Members
+Group Members
 -Decena, Janine Victoria
 -Garra, Xavier
 -Moreno, Sophia Elysse
