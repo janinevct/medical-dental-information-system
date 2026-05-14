@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Records</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- top navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      Bicol University Patient Records
+    </div>
+    <span class="nav-sub">Medical &amp; Dental Information System</span>
+  </nav>
+
+
+  <!-- main content area -->
+  <div class="container">
+
+    <!-- top bar: search + add button -->
+    <div class="topbar">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by name, address, or contact..."
+        oninput="searchPatients()"
+      />
+
+      <select id="filterGender" onchange="applyFilters()">
+        <option value="">All Genders</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+ 
+      <select id="filterAddress" onchange="applyFilters()">
+        <option value="">All Addresses</option>
+      </select>
+
+      
+      <button class="btn-add" onclick="openAddModal()">+ Add Patient</button>
+    </div>
+
+    <!-- patient table -->
+    <div class="table-wrap">
+      <table id="patientTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Gender</th>
+            <th>Address</th>
+            <th>Contact Number</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          
+        </tbody>
+      </table>
+      <p id="noResults" style="display:none;">No patients found.</p>
+    </div>
+
+  </div>
+
+
+  <!-- ADD PATIENT -->
+  <div id="addModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Add New Patient</h2>
+        <button class="close-btn" onclick="closeModal('addModal')">✕</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="add_firstname" placeholder="e.g. Juan" />
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="add_lastname" placeholder="e.g. Dela Cruz" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="add_gender">
+            <option value="">-- Select --</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Contact Number</label>
+          <input type="text" id="add_contact" placeholder="e.g. 09123456789" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" id="add_address" placeholder="e.g. Legazpi City" />
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('addModal')">Cancel</button>
+        <button class="btn-save" onclick="addPatient()">Save Patient</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- EDIT PATIENT -->
+  <div id="editModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Edit Patient</h2>
+        <button class="close-btn" onclick="closeModal('editModal')">✕</button>
+      </div>
+
+      <input type="hidden" id="edit_id" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="edit_firstname" />
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="edit_lastname" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="edit_gender">
+            <option value="">-- Select --</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Contact Number</label>
+          <input type="text" id="edit_contact" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" id="edit_address" />
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+        <button class="btn-save" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- DELETE CONFIRMATION -->
+  <div id="deleteModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box modal-small">
+      <div class="modal-header">
+        <h2>Delete Patient?</h2>
+        <button class="close-btn" onclick="closeModal('deleteModal')">✕</button>
+      </div>
+      <p style="color: #555; margin-bottom: 1.5rem;">
+        Are you sure you want to delete <strong id="delete_name_label"></strong>? This can't be undone.
+      </p>
+      <input type="hidden" id="delete_id" />
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+        <button class="btn-delete" onclick="confirmDelete()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="app.js"></script>
+</body>
+</html>
