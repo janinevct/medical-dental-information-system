@@ -52,7 +52,7 @@
   <!-- MAIN CONTENT -->
   <main class="main">
 
-    <!--  PATIENTS SECTION  -->
+    <!-- PATIENTS SECTION -->
     <section id="section-patients" class="section active">
       <div class="page-header">
         <div>
@@ -93,7 +93,7 @@
       </div>
     </section>
 
-    <!-- APPOINTMENTS SECTION  -->
+    <!-- APPOINTMENTS SECTION -->
     <section id="section-appointments" class="section">
       <div class="page-header">
         <div>
@@ -177,7 +177,7 @@
       </div>
     </section>
 
-    <!-- DENTAL SECTION-->
+    <!-- DENTAL SECTION -->
     <section id="section-dental" class="section">
       <div class="page-header">
         <div>
@@ -198,7 +198,7 @@
       </div>
     </section>
 
-    <!--MEDICAL SECTION -->
+    <!-- MEDICAL SECTION -->
     <section id="section-medical" class="section">
       <div class="page-header">
         <div>
@@ -219,7 +219,7 @@
       </div>
     </section>
 
-    <!-- PATIENT SERVICES SECTION-->
+    <!-- PATIENT SERVICES SECTION -->
     <section id="section-patient_services" class="section">
       <div class="page-header">
         <div>
@@ -243,7 +243,6 @@
   </main>
 
   <!-- ADD PATIENT MODAL -->
-  
   <div id="addModal" class="modal-overlay" style="display:none;">
     <div class="modal-box">
       <div class="modal-header">
@@ -254,10 +253,12 @@
         <div class="form-group">
           <label>First Name</label>
           <input type="text" id="add_firstname" placeholder="e.g. Juan" />
+          <span class="field-error" id="err_add_firstname"></span>
         </div>
         <div class="form-group">
           <label>Last Name</label>
           <input type="text" id="add_lastname" placeholder="e.g. Dela Cruz" />
+          <span class="field-error" id="err_add_lastname"></span>
         </div>
       </div>
       <div class="form-row">
@@ -268,15 +269,18 @@
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
+          <span class="field-error" id="err_add_gender"></span>
         </div>
         <div class="form-group">
           <label>Contact Number</label>
           <input type="text" id="add_contact" placeholder="e.g. 09123456789" />
+          <span class="field-error" id="err_add_contact"></span>
         </div>
       </div>
       <div class="form-group">
         <label>Address</label>
-        <input type="text" id="add_address" placeholder="e.g. Legazpi City" />
+        <input type="text" id="add_address" placeholder="e.g. Legazpi City" list="addressOptions" autocomplete="off" />
+        <span class="field-error" id="err_add_address"></span>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeModal('addModal')">Cancel</button>
@@ -297,10 +301,12 @@
         <div class="form-group">
           <label>First Name</label>
           <input type="text" id="edit_firstname" />
+          <span class="field-error" id="err_edit_firstname"></span>
         </div>
         <div class="form-group">
           <label>Last Name</label>
           <input type="text" id="edit_lastname" />
+          <span class="field-error" id="err_edit_lastname"></span>
         </div>
       </div>
       <div class="form-row">
@@ -311,16 +317,19 @@
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
+          <span class="field-error" id="err_edit_gender"></span>
         </div>
         <div class="form-group">
           <label>Contact Number</label>
           <input type="text" id="edit_contact" />
+          <span class="field-error" id="err_edit_contact"></span>
         </div>
       </div>
       <div class="form-group">
-        <label>Address</label>
-        <input type="text" id="edit_address" />
-      </div>
+          <label>Address</label>
+          <input type="text" id="edit_address" list="addressOptions" autocomplete="off" />
+          <span class="field-error" id="err_edit_address"></span>
+        </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
         <button class="btn-save" onclick="saveEdit()">Save Changes</button>
@@ -346,6 +355,7 @@
     </div>
   </div>
 
+  <datalist id="addressOptions"></datalist>
   <script src="app.js"></script>
 </body>
 </html>

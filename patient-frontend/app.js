@@ -3,7 +3,7 @@ const API = 'http://localhost:3000/api';
 let patients = [];
 let nextId = 1;
 
-//  SIDEBAR NAVIGATION
+// SIDEBAR NAVIGATION
 
 function showSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -12,7 +12,6 @@ function showSection(name) {
   document.getElementById('section-' + name).classList.add('active');
   document.querySelector(`[data-section="${name}"]`).classList.add('active');
 
-  // load data for that section
   if (name === 'patients')         loadPatients();
   if (name === 'appointments')     loadAppointments();
   if (name === 'visits')           loadVisits();
@@ -23,7 +22,8 @@ function showSection(name) {
   if (name === 'patient_services') loadPatientServices();
 }
 
-// PATIENTS (full CRUD) 
+// PATIENTS
+
 async function loadPatients() {
   const res  = await fetch(`${API}/patients`);
   const json = await res.json();
@@ -33,14 +33,25 @@ async function loadPatients() {
 }
 
 function buildAddressFilter() {
-  const select = document.getElementById('filterAddress');
+  const select    = document.getElementById('filterAddress');
+  const datalist  = document.getElementById('addressOptions');
   const addresses = [...new Set(patients.map(p => p.Address).filter(Boolean))];
+
   select.innerHTML = '<option value="">All Addresses</option>';
   addresses.forEach(addr => {
     const opt = document.createElement('option');
     opt.value = opt.textContent = addr;
     select.appendChild(opt);
   });
+
+  if (datalist) {
+    datalist.innerHTML = '';
+    addresses.forEach(addr => {
+      const opt = document.createElement('option');
+      opt.value = addr;
+      datalist.appendChild(opt);
+    });
+  }
 }
 
 function applyFilters() {
@@ -92,10 +103,81 @@ function renderTable(list) {
   });
 }
 
+// VALIDATION HELPERS
+
+function setError(fieldId, errorSpanId, message) {
+  const field = document.getElementById(fieldId);
+  const span  = document.getElementById(errorSpanId);
+  if (message) {
+    field.classList.add('input-error');
+    span.textContent = message;
+  } else {
+    field.classList.remove('input-error');
+    span.textContent = '';
+  }
+}
+
+function validatePatientFields(prefix) {
+  const firstname = document.getElementById(`${prefix}_firstname`).value.trim();
+  const lastname  = document.getElementById(`${prefix}_lastname`).value.trim();
+  const gender    = document.getElementById(`${prefix}_gender`).value;
+  const contact   = document.getElementById(`${prefix}_contact`).value.trim();
+  const address   = document.getElementById(`${prefix}_address`).value.trim();
+
+  let valid = true;
+
+  if (!firstname) {
+    setError(`${prefix}_firstname`, `err_${prefix}_firstname`, 'First name is required.');
+    valid = false;
+  } else {
+    setError(`${prefix}_firstname`, `err_${prefix}_firstname`, '');
+  }
+
+  if (!lastname) {
+    setError(`${prefix}_lastname`, `err_${prefix}_lastname`, 'Last name is required.');
+    valid = false;
+  } else {
+    setError(`${prefix}_lastname`, `err_${prefix}_lastname`, '');
+  }
+
+  if (!gender) {
+    setError(`${prefix}_gender`, `err_${prefix}_gender`, 'Please select a gender.');
+    valid = false;
+  } else {
+    setError(`${prefix}_gender`, `err_${prefix}_gender`, '');
+  }
+
+  if (!contact) {
+    setError(`${prefix}_contact`, `err_${prefix}_contact`, 'Contact number is required.');
+    valid = false;
+  } else if (!/^\d{11}$/.test(contact)) {
+    setError(`${prefix}_contact`, `err_${prefix}_contact`, 'Contact number must be exactly 11 digits.');
+    valid = false;
+  } else {
+    setError(`${prefix}_contact`, `err_${prefix}_contact`, '');
+  }
+
+  if (!address) {
+    setError(`${prefix}_address`, `err_${prefix}_address`, 'Address is required.');
+    valid = false;
+  } else {
+    setError(`${prefix}_address`, `err_${prefix}_address`, '');
+  }
+
+  return valid;
+}
+
 // MODALS
+
 function openAddModal() {
-  ['add_firstname','add_lastname','add_contact','add_address'].forEach(id => document.getElementById(id).value = '');
+  ['add_firstname', 'add_lastname', 'add_contact', 'add_address'].forEach(id => {
+    document.getElementById(id).value = '';
+    document.getElementById(id).classList.remove('input-error');
+  });
   document.getElementById('add_gender').value = '';
+  document.getElementById('add_gender').classList.remove('input-error');
+  ['err_add_firstname', 'err_add_lastname', 'err_add_gender', 'err_add_contact', 'err_add_address']
+    .forEach(id => document.getElementById(id).textContent = '');
   document.getElementById('addModal').style.display = 'flex';
 }
 
@@ -108,11 +190,15 @@ function openEditModal(id) {
   document.getElementById('edit_gender').value    = p.Gender;
   document.getElementById('edit_contact').value   = p.ContactNumber;
   document.getElementById('edit_address').value   = p.Address;
+  ['edit_firstname', 'edit_lastname', 'edit_gender', 'edit_contact', 'edit_address']
+    .forEach(id => document.getElementById(id).classList.remove('input-error'));
+  ['err_edit_firstname', 'err_edit_lastname', 'err_edit_gender', 'err_edit_contact', 'err_edit_address']
+    .forEach(id => document.getElementById(id).textContent = '');
   document.getElementById('editModal').style.display = 'flex';
 }
 
 function openDeleteModal(id, fullname) {
-  document.getElementById('delete_id').value              = id;
+  document.getElementById('delete_id').value               = id;
   document.getElementById('delete_name_label').textContent = fullname;
   document.getElementById('deleteModal').style.display = 'flex';
 }
@@ -122,19 +208,16 @@ function closeModal(id) {
 }
 
 // ADD
+
 async function addPatient() {
+  if (!validatePatientFields('add')) return;
+
   const firstname = document.getElementById('add_firstname').value.trim();
   const lastname  = document.getElementById('add_lastname').value.trim();
   const gender    = document.getElementById('add_gender').value;
   const contact   = document.getElementById('add_contact').value.trim();
   const address   = document.getElementById('add_address').value.trim();
 
-  if (!firstname || !lastname) { alert('Please enter both first name and last name.'); return; }
-  if (!firstname) { alert('First name is required.'); return; }
-  if (!lastname) { alert('Last name is required.'); return; }
-  if (!gender) { alert('Please select a gender.'); return; }
-  if (!contact) { alert('Contact number is required.'); return; }
-  if (!address) { alert('Address is required.'); return; }
   if (!confirm(`Create record for ${firstname} ${lastname}?`)) return;
 
   await fetch(`${API}/patients`, {
@@ -148,7 +231,10 @@ async function addPatient() {
 }
 
 // EDIT
+
 async function saveEdit() {
+  if (!validatePatientFields('edit')) return;
+
   const id        = parseInt(document.getElementById('edit_id').value);
   const firstname = document.getElementById('edit_firstname').value.trim();
   const lastname  = document.getElementById('edit_lastname').value.trim();
@@ -156,7 +242,6 @@ async function saveEdit() {
   const contact   = document.getElementById('edit_contact').value.trim();
   const address   = document.getElementById('edit_address').value.trim();
 
-  if (!firstname || !lastname) { alert("First name and last name can't be empty."); return; }
   if (!confirm(`Update record for ${firstname} ${lastname}?`)) return;
 
   await fetch(`${API}/patients/${id}`, {
@@ -170,6 +255,7 @@ async function saveEdit() {
 }
 
 // DELETE
+
 async function confirmDelete() {
   const id = parseInt(document.getElementById('delete_id').value);
   await fetch(`${API}/patients/${id}`, { method: 'DELETE' });
@@ -184,7 +270,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
   });
 });
 
-// APPOINTMENTS 
+// APPOINTMENTS
 
 async function loadAppointments() {
   const res  = await fetch(`${API}/appointments`);
@@ -238,7 +324,7 @@ async function loadVisits() {
   });
 }
 
-//  PATIENT HISTORY 
+// PATIENT HISTORY
 
 async function loadHistory() {
   const res  = await fetch(`${API}/history`);
@@ -262,7 +348,7 @@ async function loadHistory() {
   });
 }
 
-// SERVICES 
+// SERVICES
 
 async function loadServices() {
   const res  = await fetch(`${API}/services`);
@@ -287,7 +373,7 @@ async function loadServices() {
   });
 }
 
-//DENTAL 
+// DENTAL
 
 async function loadDental() {
   const res  = await fetch(`${API}/dental`);
@@ -333,7 +419,7 @@ async function loadMedical() {
   });
 }
 
-// PATIENT SERVICES 
+// PATIENT SERVICES
 
 async function loadPatientServices() {
   const res  = await fetch(`${API}/patient-services`);
@@ -360,5 +446,5 @@ async function loadPatientServices() {
   });
 }
 
-// INIT 
+// INIT
 loadPatients();

@@ -423,6 +423,21 @@ tbody td {
   line-height: 1.5;
 }
 
+/* ---- VALIDATION ---- */
+.field-error {
+  display: block;
+  color: #e53e3e;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  min-height: 1em;
+}
+
+input.input-error,
+select.input-error {
+  border: 1.5px solid #e53e3e !important;
+  background-color: #fff5f5 !important;
+}
+
 @media (max-width: 768px) {
   .sidebar { width: 100%; min-height: auto; position: relative; }
   .main { margin-left: 0; padding: 1.2rem; }
